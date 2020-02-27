@@ -909,7 +909,7 @@ BOOL isExiting = FALSE;
         [self.toolbar setItems:@[self.closeButton, flexibleSpaceButton, self.backButton, fixedSpaceButton, self.forwardButton]];
     }
     
-    self.view.backgroundColor = [UIColor grayColor];
+    self.view.backgroundColor = [UIColor clearColor];
     [self.view addSubview:self.toolbar];
     [self.view addSubview:self.addressLabel];
     [self.view addSubview:self.spinner];
@@ -1116,19 +1116,58 @@ BOOL isExiting = FALSE;
     [self.webView goForward];
 }
 
+//copied from https://github.com/apache/cordova-plugin-inappbrowser/issues/301#issuecomment-452220131
+//also changed viewWillAppear method !!
+- (BOOL)hasTopNotch {
+    if (@available(iOS 11.0, *)) {
+        return [[[UIApplication sharedApplication] delegate] window].safeAreaInsets.top > 20.0;
+    }
+
+    return  NO;
+}
+
+// changed form https://github.com/apache/cordova-plugin-inappbrowser/issues/301#issuecomment-452220131
 - (void)viewWillAppear:(BOOL)animated
 {
+//    orignal 
+//    if (IsAtLeastiOSVersion(@"7.0") && !viewRenderedAtLeastOnce) {
+//        viewRenderedAtLeastOnce = TRUE;
+//        CGRect viewBounds = [self.webView bounds];
+//        viewBounds.origin.y = STATUSBAR_HEIGHT;
+//        viewBounds.size.height = viewBounds.size.height - STATUSBAR_HEIGHT;
+//        self.webView.frame = viewBounds;
+//        [[UIApplication sharedApplication] setStatusBarStyle:[self preferredStatusBarStyle]];
+//    }
+//    [self rePositionViews];
+//
+//    [super viewWillAppear:animated];
     if (IsAtLeastiOSVersion(@"7.0") && !viewRenderedAtLeastOnce) {
-        viewRenderedAtLeastOnce = TRUE;
-        CGRect viewBounds = [self.webView bounds];
-        viewBounds.origin.y = STATUSBAR_HEIGHT;
-        viewBounds.size.height = viewBounds.size.height - STATUSBAR_HEIGHT;
-        self.webView.frame = viewBounds;
-        [[UIApplication sharedApplication] setStatusBarStyle:[self preferredStatusBarStyle]];
-    }
-    [self rePositionViews];
-    
-    [super viewWillAppear:animated];
+           viewRenderedAtLeastOnce = TRUE;
+           CGRect viewBounds = [self.webView bounds];
+           
+           if ([self hasTopNotch]) {
+               BOOL toolbarVisible = !self.toolbar.hidden;
+               BOOL toolbarIsAtBottom = ![_browserOptions.toolbarposition isEqualToString:kInAppBrowserToolbarBarPositionTop];
+
+               float topSafeArea = [[[UIApplication sharedApplication] delegate] window].safeAreaInsets.top;
+               float bottomSafeArea = [[[UIApplication sharedApplication] delegate] window].safeAreaInsets.bottom;
+
+               if (toolbarVisible && toolbarIsAtBottom) {
+                   bottomSafeArea = 0.0;
+               }
+
+               viewBounds.origin.y = topSafeArea;
+               viewBounds.size.height = viewBounds.size.height - (topSafeArea + bottomSafeArea);
+           } else {
+               viewBounds.origin.y = STATUSBAR_HEIGHT;
+               viewBounds.size.height = viewBounds.size.height - STATUSBAR_HEIGHT;
+           }
+           self.webView.frame = viewBounds;
+           [[UIApplication sharedApplication] setStatusBarStyle:[self preferredStatusBarStyle]];
+       }
+       [self rePositionViews];
+       
+       [super viewWillAppear:animated];
 }
 
 //
