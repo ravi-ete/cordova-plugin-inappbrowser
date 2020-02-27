@@ -25,6 +25,10 @@ description: Open an in-app browser window.
 |:-:|:-:|
 |[![Build status](https://ci.appveyor.com/api/projects/status/github/apache/cordova-plugin-inappbrowser?branch=master)](https://ci.appveyor.com/project/ApacheSoftwareFoundation/cordova-plugin-inappbrowser)|[![Build Status](https://travis-ci.org/apache/cordova-plugin-inappbrowser.svg?branch=master)](https://travis-ci.org/apache/cordova-plugin-inappbrowser)|
 
+# FIX: Issue with status bar on iPhone X when toolbar is at the top
+Fixed from comment till new releases
+https://github.com/ravi-ete/cordova-plugin-inappbrowser/commit/0015975621b4db3dde5dddeaca8657aca96d8c62
+
 # cordova-plugin-inappbrowser
 
 You can show helpful articles, videos, and web resources inside of your app. Users can view web pages without leaving your app.
