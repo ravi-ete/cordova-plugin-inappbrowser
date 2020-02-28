@@ -32,7 +32,9 @@
 - (void) viewDidLoad {
 
     CGRect statusBarFrame = [self invertFrameIfNeeded:[UIApplication sharedApplication].statusBarFrame];
-    statusBarFrame.size.height = STATUSBAR_HEIGHT;
+    // statusBarFrame.size.height = STATUSBAR_HEIGHT;
+    // solving overlapping of status bar https://github.com/apache/cordova-plugin-inappbrowser/issues/301#issuecomment-452220131
+    statusBarFrame.size.height = 0;
     // simplified from: http://stackoverflow.com/a/25669695/219684
 
     UIToolbar* bgToolbar = [[UIToolbar alloc] initWithFrame:statusBarFrame];
